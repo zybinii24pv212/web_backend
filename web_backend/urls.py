@@ -8,6 +8,7 @@ urlpatterns = [
                   path('admin/', admin.site.urls),
                   path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
                   path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+                  path('api/register/', include('authentication.urls')),
                   path('api/', include('product.urls')),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
