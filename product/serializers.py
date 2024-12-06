@@ -9,9 +9,13 @@ class ProductImageSerializer(serializers.ModelSerializer):
         fields = ['image']
 
 
+
 class ProductSerializer(serializers.ModelSerializer):
-    images = ProductImageSerializer(many=True, read_only=True)  # Серилизатор для изображений
+    images = serializers.SerializerMethodField()
 
     class Meta:
         model = ProductModel
         fields = '__all__'
+
+    def get_images(self, obj):
+        return [image.image.url for image in obj.images.all()]
