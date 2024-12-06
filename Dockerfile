@@ -8,9 +8,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
 
-RUN python manage.py makemigrations && \
-    python manage.py migrate && \
-    python manage.py collectstatic \
+
+
 
 EXPOSE 8000
 
