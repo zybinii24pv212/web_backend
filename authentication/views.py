@@ -23,9 +23,8 @@ class UserRegisterView(generics.CreateAPIView):
             refresh_token = str(refresh)
 
             return Response({
-                "username": user.username,
-                "access_token": access_token,
-                "refresh_token": refresh_token
+                "access": access_token,
+                "refresh": refresh_token
             }, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

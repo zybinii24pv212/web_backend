@@ -25,9 +25,10 @@ class CartViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(cart)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=False, methods=['post'])
     def add_item(self, request):
-        cart = self.get_object()
+        """Добавить товар в корзину"""
+        cart, created = Cart.objects.get_or_create(user=request.user)
         product_id = request.data.get('product_id')
         quantity = request.data.get('quantity', 1)
 
@@ -48,9 +49,10 @@ class CartViewSet(viewsets.ModelViewSet):
 
         return Response({"success": "Товар добавлен в корзину"}, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=False, methods=['post'])
     def remove_item(self, request):
-        cart = self.get_object()
+        """Удалить товар из корзины"""
+        cart, created = Cart.objects.get_or_create(user=request.user)
         product_id = request.data.get('product_id')
 
         if not product_id:
@@ -83,3 +85,9 @@ class CartViewSet(viewsets.ModelViewSet):
             return Response({"error": "Товар не найден в корзине"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response({"success": "Количество товара обновлено"}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def buy(self, request, pk=None):
+        cart = self.get_object()
+        cart.items.all().delete()
+        return Response({"success": "Покупка завершена, корзина очищена"}, status=status.HTTP_200_OK)
