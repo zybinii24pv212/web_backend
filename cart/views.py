@@ -28,7 +28,12 @@ class CartViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     def add_item(self, request):
         """Добавить товар в корзину"""
+        if not request.user.is_authenticated:
+            return Response({"error": "Пользователь не аутентифицирован"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        print("START ADDING")
         cart, created = Cart.objects.get_or_create(user=request.user)
+
         product_id = request.data.get('product_id')
         quantity = request.data.get('quantity', 1)
 
@@ -41,6 +46,7 @@ class CartViewSet(viewsets.ModelViewSet):
             return Response({"error": "Продукт не найден"}, status=status.HTTP_404_NOT_FOUND)
 
         cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+
         if not created:
             cart_item.quantity += int(quantity)
         else:
