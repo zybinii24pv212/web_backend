@@ -72,10 +72,10 @@ class CartViewSet(viewsets.ModelViewSet):
 
         return Response({"success": "Товар удален из корзины"}, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=False, methods=['post'])
     def update_item(self, request):
         """Изменить количество товара в корзине"""
-        cart = self.get_object()
+        cart = Cart.objects.get(user=request.user)
         product_id = request.data.get('product_id')
         quantity = request.data.get('quantity')
 
@@ -92,8 +92,8 @@ class CartViewSet(viewsets.ModelViewSet):
 
         return Response({"success": "Количество товара обновлено"}, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['post'])
-    def buy(self, request, pk=None):
-        cart = self.get_object()
+    @action(detail=False, methods=['post'])
+    def buy(self, request):
+        cart = Cart.objects.get(user=request.user)
         cart.items.all().delete()
         return Response({"success": "Покупка завершена, корзина очищена"}, status=status.HTTP_200_OK)
